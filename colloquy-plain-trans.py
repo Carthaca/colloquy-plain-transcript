@@ -11,6 +11,7 @@ from urlparse import parse_qs
 import argparse
 import sys
 import locale
+import re
 
 if sys.stdout.isatty():
     default_encoding = sys.stdout.encoding
@@ -31,7 +32,8 @@ def main(log_file_list):
             messages = e.findall('message')
             for m in messages:
                 received = m.get('received')
-                dt = datetime.strptime(received, "%Y-%m-%d %H:%M:%S +0800")
+		received = re.sub(r"[+]([0-9])+", "", received)
+                dt = datetime.strptime(received, "%Y-%m-%d %H:%M:%S ")
                 dt_str = dt.strftime("%Y-%m-%d %H:%M")
                 if m.text:
                     print "%s %s %s: %s" % (dt_str, channel, sender.text,
